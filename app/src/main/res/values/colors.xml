@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#004081</color>
+    <color name="taskbar">#A00A03</color>
+    <color name="correct">#FFB4E3E0</color>
+    <color name="wrong">#FFEEA574</color>
+    <color name="total">#C9D49F</color>
+    <color name="charcount">#AFB7F5</color>
+    <color name="speed">#F8E185</color>
+    <color name="acc">#D7ACF4</color>
+    <color name="history">#000000</color>
+    <color name="maxlevel">#097FFF</color>
+    <color name="maxscore">#9FFFFF</color>
+    <color name="thislevel">#12a1fb</color>
+    <color name="link">#00A2FA</color>
+    <color name="text_history">#FFFFFF</color>
+    <color name="scoreboard">#0000F1</color>
+    <color name="scoreboard_text">#A90021</color>
+    <color name="scoreboard_odd">#def0fb</color>
+    <color name="scoreboard_even">#F0F2F0</color>
+</resources>

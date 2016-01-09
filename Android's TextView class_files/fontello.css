@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'fontello';
+  src: url('../font/fontello.eot?81575353');
+  src: url('../font/fontello.eot?81575353#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff?81575353') format('woff'),
+       url('../font/fontello.ttf?81575353') format('truetype'),
+       url('../font/fontello.svg?81575353#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'fontello';
+    src: url('../font/fontello.svg?81575353#fontello') format('svg');
+  }
+}
+*/
+ 
+ [class^="mn-ficons-"]:before, [class*=" mn-ficons-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+   display: inline-block;
+}
+ 
+.mn-ficons-horizonlogo:before { content: '\e800'; } /* '' */
