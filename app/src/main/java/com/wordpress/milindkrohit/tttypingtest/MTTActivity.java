@@ -88,7 +88,7 @@ public class MTTActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity();
+                start_activity();
             }
         });
         FloatingActionButton home = (FloatingActionButton) findViewById(R.id.home);
@@ -369,7 +369,7 @@ public class MTTActivity extends AppCompatActivity {
         String str ="https://www.milindkrohit.wordpress.com";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(str)));
     }
-    public void startActivity(){
+    public void start_activity(){
 
         Intent intent = new Intent(this, MTTActivity.class);
         intent.putExtra("level", level);

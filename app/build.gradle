@@ -9,8 +9,8 @@ android {
             storePassword 'M786okay@'
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
     defaultConfig {
         applicationId "com.wordpress.milindkrohit.tttypingtest"
         minSdkVersion 9
