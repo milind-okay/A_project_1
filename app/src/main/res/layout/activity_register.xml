@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.wordpress.milindkrohit.tttypingtest.mLoginActivity">
+    tools:context="com.wordpress.milindkrohit.tttypingtest.Register">
 
     <!-- Login progress -->
     <ProgressBar
@@ -23,54 +23,42 @@
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <LinearLayout
-            android:id="@+id/email_login_form"
+
+            android:visibility="gone"
+            android:id="@+id/username_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="center">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/email"
+                    android:id="@+id/userName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
+                    android:hint="@string/prompt_username"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    />
 
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/done_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
+                android:text="@string/action_done"
                 android:textStyle="bold" />
 
             <com.google.android.gms.ads.AdView
@@ -78,9 +66,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="top"
-                android:layout_marginBottom="120dp"
+
+                android:layout_gravity="top|center"
+                android:layout_marginTop="2dp"
                 ads:adSize="BANNER"
                 ads:adUnitId="@string/banner_ad_unit_id">
             </com.google.android.gms.ads.AdView>

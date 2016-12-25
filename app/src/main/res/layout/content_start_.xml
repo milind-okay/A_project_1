@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -12,6 +13,7 @@
     tools:context="com.wordpress.milindkrohit.tttypingtest.Start_Activity"
     tools:showIn="@layout/activity_start_"
     >
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -25,24 +27,10 @@
         android:gravity="center|top"
         android:layout_weight="55"
         android:weightSum="120">
+
+
         <TextView
             android:id="@+id/log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:textColor="@color/link"
-            android:clickable="true"/>
-        <TextView
-            android:id="@+id/addnew"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textColor="@color/link"
-            android:layout_gravity="right"
-            android:clickable="true"
-            />
-        <TextView
-            android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/thislevel"
@@ -74,7 +62,8 @@
             android:layout_height="wrap_content"
             android:weightSum="100">
         <TextView
-            android:text="Your Points : "
+            android:text="Your Rank: "
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="50"
@@ -117,17 +106,13 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="50"
                 android:layout_margin="5dp"
-                android:background="#1d0b93"
-                android:dropDownWidth="wrap_content"
-                android:dropDownSelector="#11cf14"
+                android:background="#b6cee2"
+                android:dropDownWidth="match_parent"
                 android:focusable="true"
                 android:gravity="center"
                 android:textColor ="#FFFFFF"
                 android:textAlignment="center"
-                android:spinnerMode="dialog"
-                android:popupElevation="50dp"
-
-                android:popupBackground="#098dfa" />
+                 />
 
 
 
@@ -137,31 +122,37 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="50"
-                android:background="#1d0b93"
                 android:dropDownWidth="match_parent"
                 android:focusable="true"
                 android:layout_margin="5dp"
                 android:textColor ="#FFFFFF"
                 android:clickable="true"
-                android:dropDownSelector="#1bf1c6"
-
+                android:popupElevation="50dp"
+                android:background="#b6cee2"
                 android:layoutMode="clipBounds"
-                android:popupBackground="#098dfa" />
+                 />
             </LinearLayout>
         <LinearLayout
             android:id="@+id/secondsecond"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layout_marginBottom="2dp"
-
-
             android:weightSum="100">
 
-
+        <Button
+            android:id="@+id/start"
+            android:layout_margin="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+            android:text="Start"
+            android:elevation="7dp"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:background="@color/colorPrimary"
+            android:ellipsize="middle" />
             </LinearLayout>
 
     </LinearLayout>
     </LinearLayout>
+
 </RelativeLayout>

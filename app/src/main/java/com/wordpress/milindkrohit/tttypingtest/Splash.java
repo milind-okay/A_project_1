@@ -58,7 +58,7 @@ public class Splash extends AppCompatActivity {
         finish();
     }
     public void new_act(){
-        Intent login = new Intent(this, MTTActivity.class);
+        Intent login = new Intent(this, Start_Activity.class);
         startActivity(login);
     }
 

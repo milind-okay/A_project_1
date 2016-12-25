@@ -1,5 +1,6 @@
 package com.wordpress.milindkrohit.tttypingtest;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,18 +8,20 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.wordpress.milindkrohit.tttypingtest.utils.Const;
 
 public class scoreboard extends AppCompatActivity {
     private AdView mAdView;
-    DBHelper mydb;
     private TextView points,maxscore,maxscorelevel,scorelevel1,scorelevel2,scorelevel3,scorelevel4
             ,scorelevel5,scorelevel6,scorelevel7;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
+        sharedPreferences = getSharedPreferences(Const.mypreference, MODE_PRIVATE);
+        //editor = sharedPreferences.edit();
         init_val();
-        mydb = new DBHelper(this);
         set_score();
 
     }
@@ -45,18 +48,16 @@ public class scoreboard extends AppCompatActivity {
         scorelevel7 = (TextView)findViewById(R.id.level7_score);
     }
     private void set_score(){
-        Cursor rs = mydb.getData(1);
-        rs.moveToFirst();
-        points.setText(Integer.toString(rs.getInt(rs.getColumnIndex(DBHelper.MPOINTS))));
-        maxscore.setText(rs.getString(rs.getColumnIndex(DBHelper.COLUMN_CHARCOUNT)));
-        maxscorelevel.setText(rs.getString(rs.getColumnIndex(DBHelper.COLUMN_LEVEL)));
-        scorelevel1.setText(rs.getString(rs.getColumnIndex(DBHelper.CHAR_LEVEL1)));
-        scorelevel2.setText(rs.getString(rs.getColumnIndex(DBHelper.CHAR_LEVEL2)));
-        scorelevel3.setText(rs.getString(rs.getColumnIndex(DBHelper.CHAR_LEVEL3)));
-        scorelevel4.setText(rs.getString(rs.getColumnIndex(DBHelper.CHAR_LEVEL4)));
-        scorelevel5.setText(rs.getString(rs.getColumnIndex(DBHelper.CHAR_LEVEL5)));
-        scorelevel6.setText(rs.getString(rs.getColumnIndex(DBHelper.CHAR_LEVEL6)));
-        scorelevel7.setText(rs.getString(rs.getColumnIndex(DBHelper.CHAR_LEVEL7)));
+
+        points.setText(Integer.toString(sharedPreferences.getInt(Const.RANK, 0)));
+        maxscore.setText(sharedPreferences.getInt(Const.MAX_SCORE, 0));
+        scorelevel1.setText(sharedPreferences.getInt(Const.LEVEL_1_RANK, 0));
+        scorelevel2.setText(sharedPreferences.getInt(Const.LEVEL_2_RANK, 0));
+        scorelevel3.setText(sharedPreferences.getInt(Const.LEVEL_3_RANK, 0));
+        scorelevel4.setText(sharedPreferences.getInt(Const.LEVEL_4_RANK, 0));
+        scorelevel5.setText(sharedPreferences.getInt(Const.LEVEL_5_RANK, 0));
+        scorelevel6.setText(sharedPreferences.getInt(Const.LEVEL_6_RANK, 0));
+        scorelevel7.setText(sharedPreferences.getInt(Const.LEVEL_7_RANK, 0));
 
     }
 }

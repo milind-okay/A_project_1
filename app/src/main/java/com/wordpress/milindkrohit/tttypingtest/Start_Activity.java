@@ -1,8 +1,10 @@
 package com.wordpress.milindkrohit.tttypingtest;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Region;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.wordpress.milindkrohit.tttypingtest.utils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,81 +36,26 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
     private Spinner level_spinner,time_spinner;
     private TextView log,user,addnew,mpoints;
     private AdView mAdView;
-    int level_no,time_t,num_row;
+    private Button start;
+    int level_no,time_t;
 
-    DBHelper mydb;
+    SharedPreferences sharedPreferences;
+
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mydb = new DBHelper(this);
-        /*mAdView = (AdView) findViewById(R.id.adViewstart);
-        //uncomment it when publishing
-        //AdRequest adRequest = new AdRequest.Builder().build();
+        initvalue();
+       start.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               mactivity();
 
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        mAdView.loadAd(adRequest);*/
-        num_row = mydb.numberOfRows();
-       // initvalue();
-        level_spinner = (Spinner) findViewById(R.id.level);
-        time_spinner = (Spinner) findViewById(R.id.time);
-        log = (TextView)findViewById(R.id.log);
-        user = (TextView)findViewById(R.id.username);
-        addnew = (TextView)findViewById(R.id.addnew);
-        mpoints = (TextView)findViewById(R.id.points);
-        level_no = 1;
-        time_t = 60;
-
-        level_spinner.setOnItemSelectedListener(this);
-        time_spinner.setOnItemSelectedListener(this);
-        ArrayAdapter<CharSequence>  levelAdapter = ArrayAdapter.createFromResource(this,
-                R.array.level_str, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence>  timeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.time, android.R.layout.simple_spinner_item);
-
-        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        level_spinner.setAdapter(levelAdapter);
-        time_spinner.setAdapter(timeAdapter);
-        set_log();
-        if(num_row > 0) {
-            setPoints();
-        }
-
-        /*ArrayList array_list = mydb.getAllCotacts();
-        ArrayAdapter arrayAdapter=new ArrayAdapter(this,android.R.layout.simple_list_item_1, array_list);
-        obj = (ListView)findViewById(R.id.listView1);
-        obj.setAdapter(arrayAdapter);
-        obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                // TODO Auto-generated method stub
-                int id_To_Search = arg2 + 1;
-
-                Bundle dataBundle = new Bundle();
-                dataBundle.putInt("id", id_To_Search);
-
-                Intent intent = new Intent(getApplicationContext(), Reg_user.class);
-
-                intent.putExtras(dataBundle);
-                startActivity(intent);
-            }
-        });*/
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(log.getText().toString().equals(R.string.welcome)) {
-                    mctivity();
-                }else{
-                    Toast.makeText(Start_Activity.this, "Sign Up/Sign In first to Start", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+           }
+       });
         log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,29 +64,16 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
             }
         });
 
-        addnew.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reg_user();
-
-            }
-        });
-
-
-
-
     }
     public void initvalue(){
 
         level_spinner = (Spinner) findViewById(R.id.level);
         time_spinner = (Spinner) findViewById(R.id.time);
         log = (TextView)findViewById(R.id.log);
-        user = (TextView)findViewById(R.id.username);
-        addnew = (TextView)findViewById(R.id.addnew);
         mpoints = (TextView)findViewById(R.id.points);
+        start = (Button)findViewById(R.id.start);
         level_no = 1;
         time_t = 60;
-
         level_spinner.setOnItemSelectedListener(this);
         time_spinner.setOnItemSelectedListener(this);
         ArrayAdapter<CharSequence>  levelAdapter = ArrayAdapter.createFromResource(this,
@@ -149,8 +85,9 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
         timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         level_spinner.setAdapter(levelAdapter);
         time_spinner.setAdapter(timeAdapter);
+        sharedPreferences = getSharedPreferences(Const.mypreference, MODE_PRIVATE);
         set_log();
-        if(num_row > 0) {
+        if(sharedPreferences.getInt(Const.IS_LOGIN, 0)==1) {
             setPoints();
         }
     }
@@ -179,20 +116,10 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
                 Intent about = new Intent(this, AboutUs.class);
                 startActivity(about);
                 return true;
-
-            case R.id.log:
-                logout();
-                return true;
             case R.id.scoreboard:
                 Intent scoreboard = new Intent(this, scoreboard.class);
                 startActivity(scoreboard);
                 return true;
-            case R.id.account:
-                if(log.getText().toString().equals(R.string.welcome)) {
-                    account();
-                }else{
-                    Toast.makeText(Start_Activity.this, "Sign Up/Sign In first to Start", Toast.LENGTH_SHORT).show();
-                }
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -200,7 +127,7 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
 
     }
 
-    public void mctivity(){
+    public void mactivity(){
         Intent intent = new Intent(this, MTTActivity.class);
         intent.putExtra("level", level_no);
         intent.putExtra("time", time_t);
@@ -217,7 +144,7 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
         emailIntent.setData(Uri.parse("mailto:"));
         emailIntent.setType("plane/text");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, emailaddress);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "SudokuSolverAdvanced : state your subject here");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "TT(TypingTest : state your subject here");
 
         emailIntent.putExtra(Intent.EXTRA_TEXT, info);
 
@@ -243,12 +170,12 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
     private void reg_user(){
         Bundle dataBundle = new Bundle();
         dataBundle.putInt("id", 0);
-        Intent intent = new Intent(getApplicationContext(),log.class);
+        Intent intent = new Intent(getApplicationContext(),Register.class);
         intent.putExtras(dataBundle);
         startActivity(intent);
     }
     private void login_user(){
-        Intent login = new Intent(this, mLoginActivity.class);
+        Intent login = new Intent(this, Register.class);
         startActivity(login);
     }
     @Override
@@ -266,56 +193,31 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
 
 
     }
-    public void account(){
-        Intent login = new Intent(this, Account.class);
-        startActivity(login);
-    }
+
 
 
     public void onNothingSelected(AdapterView<?> arg0) {
         // TODO Auto-generated method stub
     }
-    private void logout(){
-        mydb.logout(1,"0");
-        log.setText("Sign In");
-        user.setText("");
-        Intent intent = new Intent(getApplicationContext(),Start_Activity.class);
-        startActivity(intent);
 
-    }
     private void set_log(){
-        if(num_row > 0){
-            Cursor rs = mydb.getData(1);
-            rs.moveToFirst();
-            if(rs.getInt(rs.getColumnIndex(DBHelper.ISSIGNIN)) == 1){
+        if(sharedPreferences.getInt(Const.IS_LOGIN, 0)==1){
+
                 log.setClickable(false);
-                log.setText(R.string.welcome);
+
                 log.setTextColor(Color.WHITE);
-                user.setText(rs.getString(rs.getColumnIndex(DBHelper.COLUMN_NAME)));
+
                 //addnew.setText("Add New");
-            }else {
-                log.setText(R.string.signin);
-                addnew.setText(R.string.action_log);
-            }
-            if (!rs.isClosed())
-            {
-                rs.close();
-            }
+
         }else {
-            log.setText(R.string.signup);
+            log.setText(R.string.register_msg);
                }
     }
     public void log_fun(){
-        if(num_row > 0){
-            Cursor rs = mydb.getData(1);
-            rs.moveToFirst();
-            if(!(rs.getInt(rs.getColumnIndex(DBHelper.ISSIGNIN)) == 1)){
+        if(sharedPreferences.getInt(Const.IS_LOGIN, 0)==1){
+
                 login_user();
-            }
-            if (!rs.isClosed())
-            {
-                rs.close();
-            }
+
         }else {
             reg_user();
         }
@@ -334,14 +236,14 @@ public class Start_Activity extends AppCompatActivity implements AdapterView.OnI
         return super.onKeyDown(keycode, event);
     }
     private void setPoints(){
-        Cursor rs = mydb.getData(1);
-        rs.moveToFirst();
-        mpoints.setText(rs.getString(rs.getColumnIndex(DBHelper.MPOINTS)));
-        if (!rs.isClosed())
-        {
-            rs.close();
-        }
+        mpoints.setText("Rank " + sharedPreferences.getInt(Const.RANK, 0));
+        log.setText("Hi! " + sharedPreferences.getString(Const.USER_NAME,"User"));
     }
 
 
+    private void logout(){
+        editor.putInt(Const.IS_LOGIN, 0);
+        editor.apply();
+
+    }
 }

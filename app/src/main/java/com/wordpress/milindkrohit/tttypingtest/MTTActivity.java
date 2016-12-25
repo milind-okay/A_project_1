@@ -1,6 +1,7 @@
 package com.wordpress.milindkrohit.tttypingtest;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -24,16 +25,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.wordpress.milindkrohit.tttypingtest.utils.Const;
 
 public class MTTActivity extends AppCompatActivity {
-    private TextView firstline,secondline,tcount,mcount,wcount,acct,mclock,charcount,mspeed,maxchar,char_level,thislevel;
+    private TextView firstline,secondline,tcount,mcount,wcount,acct,mclock,charcount,mspeed,maxchar,max_score,record_score,current_score,rank;
     private EditText input;
     private AdView mAdView;
 
-    int Mcount,Tcount,Wcount,Ccount,level,time,points,charlevel;
+    int Mcount,Tcount,Wcount,Ccount,level,time,points,Max_socre,Record_score,Rank,Current_score;
     double t_value;
-    DBHelper mydb;
-    Cursor rs;
+    SharedPreferences sharedPreferences;
+
+    SharedPreferences.Editor editor;
     String strArr[][] = {
             {"you are in first level ",
                     "type simple words and",
@@ -76,6 +79,8 @@ public class MTTActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mtt);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        sharedPreferences = getSharedPreferences(Const.mypreference, MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         initValue();
         final MyCount counter = new MyCount(time*1000,1000);
         final int strtype[] = new int[10];
@@ -91,13 +96,7 @@ public class MTTActivity extends AppCompatActivity {
                 start_activity();
             }
         });
-        FloatingActionButton home = (FloatingActionButton) findViewById(R.id.home);
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                homeActivity();
-            }
-        });
+
         input.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +113,7 @@ public class MTTActivity extends AppCompatActivity {
 
 
             int i = 0, j = 0, k = 0, len;
-            String str1[] = str[k].split(" ");
+            String str1[];
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -180,7 +179,7 @@ public class MTTActivity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
-
+                str1 = str[k].split(" ");
 
             }
 
@@ -216,66 +215,33 @@ public class MTTActivity extends AppCompatActivity {
         wcount  = (TextView)findViewById(R.id.wrongcount);
         acct = (TextView) findViewById(R.id.acc);
         mclock = (TextView) findViewById(R.id.mclock);
-        maxchar = (TextView) findViewById(R.id.maxchar);
-        char_level = (TextView) findViewById(R.id.level);
+        max_score = (TextView) findViewById(R.id.max_score);
+        record_score = (TextView) findViewById(R.id.record_score);
+        rank = (TextView) findViewById(R.id.level_rank);
         charcount = (TextView) findViewById(R.id.charcount);
         mspeed = (TextView) findViewById(R.id.tspeed);
-        thislevel = (TextView) findViewById(R.id.thislevelscore);
+        current_score = (TextView) findViewById(R.id.current_score);
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
         }
         level = extras.getInt("level");
         time = extras.getInt("time");
-        mydb = new DBHelper(this);
-        rs = mydb.getData(1);
-        rs.moveToFirst();
+        if(sharedPreferences.getInt(Const.IS_LOGIN, 0)==1) {
 
+            points = sharedPreferences.getInt(Const.RANK, 0);
 
-        points = rs.getInt(rs.getColumnIndex(DBHelper.MPOINTS));
-        setcharlevel(level + 1);
-        maxchar.setText(Integer.toString(rs.getInt(rs.getColumnIndex(DBHelper.COLUMN_CHARCOUNT))));
-        char_level.setText(Integer.toString(rs.getInt(rs.getColumnIndex(DBHelper.COLUMN_LEVEL))));
-        thislevel.setText(Integer.toString(charlevel));
-
+        }
         str = strArr[level];
-
         firstline.setText(str[0]);
         secondline.setText(str[1]);
         Mcount = Tcount = Wcount=Ccount = 0;
         t_value = (double)time/(double)60;
+        setStats(level + 1);
+
 
     }
-    public void setcharlevel(int level){
-        switch (level){
-            case 1:
-                charlevel = rs.getInt(rs.getColumnIndex(DBHelper.CHAR_LEVEL1));
-                break;
-            case 2:
-                charlevel = rs.getInt(rs.getColumnIndex(DBHelper.CHAR_LEVEL2));
-                break;
-            case 3:
-                charlevel = rs.getInt(rs.getColumnIndex(DBHelper.CHAR_LEVEL3));
-                break;
-            case 4:
-                charlevel = rs.getInt(rs.getColumnIndex(DBHelper.CHAR_LEVEL4));
-                break;
-            case 5:
-                charlevel = rs.getInt(rs.getColumnIndex(DBHelper.CHAR_LEVEL5));
-                break;
-            case 6:
-                charlevel = rs.getInt(rs.getColumnIndex(DBHelper.CHAR_LEVEL6));
-                break;
-            case 7:
-                charlevel = rs.getInt(rs.getColumnIndex(DBHelper.CHAR_LEVEL7));
-                break;
-            default:
-                break;
 
-
-
-        }
-    }
     public class MyCount extends CountDownTimer {
 
         public MyCount(long millisInFuture, long countDownInterval) {
@@ -289,21 +255,33 @@ public class MTTActivity extends AppCompatActivity {
             disableEditText(input);
             Ccount =(int)(Ccount/t_value);
             charcount.setText(Integer.toString(Ccount));
-
+            Current_score = Ccount;
+            current_score.setText(Integer.toString(Current_score));
             mspeed.setText(Integer.toString((int)(Mcount/t_value)));
 
             acct.setText(Double.toString((double) (Mcount) / (double) (Tcount)));
+            if(sharedPreferences.getInt(Const.IS_LOGIN, 0)==1 ) {
+                if (Current_score > Max_socre) {
+                    int OverALllMaxScore = sharedPreferences.getInt(Const.MAX_SCORE,0) + (Current_score - Max_socre)*(level + 1);
+                    editor.putInt(Const.MAX_SCORE,OverALllMaxScore);
+                    updateMaxScore();
+                    //TODO get rank from server
+                    int L_rank = 0,G_rank = 0;
+                    updateLRank(L_rank);
+                    editor.putInt(Const.RANK,G_rank);
+                    rank.setText(Integer.toString(L_rank));
+                    editor.apply();
+                }
+                if (Current_score > Record_score) {
+                    updateRecordScore();
+                    //TODO update at server
+                }
+                /*if (Ccount > charlevel) {
+                    points = points + ((level + 1) * (Ccount - charlevel));
+                    mydb.updatelevel(1, points, Ccount, level + 1);
+                    thislevel.setText(Integer.toString(Ccount));
 
-            if(Ccount > rs.getInt(rs.getColumnIndex(DBHelper.COLUMN_CHARCOUNT))){
-                mydb.updatescore(1, Ccount,level + 1);
-                maxchar.setText(Integer.toString(Ccount));
-                char_level.setText(Integer.toString(level + 1));
-            }
-            if(Ccount > charlevel){
-                points = points + ((level + 1)*(Ccount - charlevel ));
-                mydb.updatelevel(1,points,Ccount,level + 1);
-                thislevel.setText(Integer.toString(Ccount));
-
+                }*/
             }
         }
 
@@ -314,6 +292,146 @@ public class MTTActivity extends AppCompatActivity {
         }
 
     }
+
+    public void setStats(int level){
+        switch (level){
+            case 1:
+                Max_socre = sharedPreferences.getInt(Const.LEVEL_1_SCORE, 0);
+                Rank = sharedPreferences.getInt(Const.LEVEL_1_RANK, 0);
+                Record_score = sharedPreferences.getInt(Const.LEVEL_1_RSCORE, 0);
+                break;
+            case 2:
+                Max_socre = sharedPreferences.getInt(Const.LEVEL_2_SCORE, 0);
+                Rank = sharedPreferences.getInt(Const.LEVEL_2_RANK, 0);
+                Record_score = sharedPreferences.getInt(Const.LEVEL_2_RSCORE, 0);
+                break;
+            case 3:
+                Max_socre = sharedPreferences.getInt(Const.LEVEL_3_SCORE, 0);
+                Rank = sharedPreferences.getInt(Const.LEVEL_3_RANK, 0);
+                Record_score = sharedPreferences.getInt(Const.LEVEL_3_RSCORE, 0);
+                break;
+            case 4:
+                Max_socre = sharedPreferences.getInt(Const.LEVEL_4_SCORE, 0);
+                Rank = sharedPreferences.getInt(Const.LEVEL_4_RANK, 0);
+                Record_score = sharedPreferences.getInt(Const.LEVEL_4_RSCORE, 0);
+                break;
+            case 5:
+                Max_socre = sharedPreferences.getInt(Const.LEVEL_5_SCORE, 0);
+                Rank = sharedPreferences.getInt(Const.LEVEL_5_RANK, 0);
+                Record_score = sharedPreferences.getInt(Const.LEVEL_5_RSCORE, 0);
+                break;
+            case 6:
+                Max_socre = sharedPreferences.getInt(Const.LEVEL_6_SCORE, 0);
+                Rank = sharedPreferences.getInt(Const.LEVEL_6_RANK, 0);
+                Record_score = sharedPreferences.getInt(Const.LEVEL_6_RSCORE, 0);
+                break;
+            case 7:
+                Max_socre = sharedPreferences.getInt(Const.LEVEL_7_SCORE, 0);
+                Rank = sharedPreferences.getInt(Const.LEVEL_7_RANK, 0);
+                Record_score = sharedPreferences.getInt(Const.LEVEL_7_RSCORE, 0);
+                break;
+            default:
+                break;
+
+        }
+        max_score.setText(Integer.toString(Max_socre));
+        record_score.setText(Integer.toString(Record_score));
+        rank.setText(Integer.toString(Rank));
+
+    }
+    public void updateMaxScore(){
+        switch (level + 1){
+            case 1:
+                editor.putInt(Const.LEVEL_1_SCORE, Current_score).apply();
+
+                break;
+            case 2:
+                editor.putInt(Const.LEVEL_2_SCORE, Current_score).apply();
+                break;
+            case 3:
+                editor.putInt(Const.LEVEL_3_SCORE, Current_score).apply();
+                break;
+            case 4:
+                editor.putInt(Const.LEVEL_4_SCORE, Current_score).apply();
+                break;
+            case 5:
+                editor.putInt(Const.LEVEL_5_SCORE, Current_score).apply();
+                break;
+            case 6:
+                editor.putInt(Const.LEVEL_6_SCORE, Current_score).apply();
+                break;
+            case 7:
+                editor.putInt(Const.LEVEL_7_SCORE, Current_score).apply();
+                break;
+            default:
+                break;
+
+        }
+        max_score.setText(Integer.toString(Current_score));
+
+    }
+    public void updateLRank(int rank){
+        switch (level + 1){
+            case 1:
+                editor.putInt(Const.LEVEL_1_RANK, rank).apply();
+
+                break;
+            case 2:
+                editor.putInt(Const.LEVEL_2_RANK, rank).apply();
+                break;
+            case 3:
+                editor.putInt(Const.LEVEL_3_RANK, rank).apply();
+                break;
+            case 4:
+                editor.putInt(Const.LEVEL_4_RANK, rank).apply();
+                break;
+            case 5:
+                editor.putInt(Const.LEVEL_5_RANK, rank).apply();
+                break;
+            case 6:
+                editor.putInt(Const.LEVEL_6_RANK, rank).apply();
+                break;
+            case 7:
+                editor.putInt(Const.LEVEL_7_RANK, rank).apply();
+                break;
+            default:
+                break;
+
+        }
+        this.rank.setText(Integer.toString(rank));
+
+    }
+    public void updateRecordScore(){
+        switch (level + 1){
+            case 1:
+                editor.putInt(Const.LEVEL_1_RSCORE, Current_score).apply();
+
+                break;
+            case 2:
+                editor.putInt(Const.LEVEL_2_RSCORE, Current_score).apply();
+                break;
+            case 3:
+                editor.putInt(Const.LEVEL_3_RSCORE, Current_score).apply();
+                break;
+            case 4:
+                editor.putInt(Const.LEVEL_4_RSCORE, Current_score).apply();
+                break;
+            case 5:
+                editor.putInt(Const.LEVEL_5_RSCORE, Current_score).apply();
+                break;
+            case 6:
+                editor.putInt(Const.LEVEL_6_RSCORE, Current_score).apply();
+                break;
+            case 7:
+                editor.putInt(Const.LEVEL_7_RSCORE, Current_score).apply();
+                break;
+            default:
+                break;
+
+        }
+        record_score.setText(Integer.toString(Current_score));
+
+    }
     private void disableEditText(EditText editText) {
         editText.setFocusable(false);
         editText.setEnabled(false);
@@ -322,53 +440,7 @@ public class MTTActivity extends AppCompatActivity {
         editText.setBackgroundColor(Color.TRANSPARENT);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_mtt, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-
-        switch (item.getItemId()) {
-            case R.id.rate_us:
-                rate_us();
-                return true;
-            case R.id.help:
-                showHelp();
-                return true;
-            case R.id.action_contact:
-               sendEmail();
-                return true;
-            case R.id.action_about:
-                Intent about = new Intent(this, AboutUs.class);
-                startActivity(about);
-                return true;
-            case R.id.log:
-
-                logout();
-                return true;
-            case R.id.scoreboard:
-                Intent scoreboard = new Intent(this, scoreboard.class);
-                startActivity(scoreboard);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-        }
-
-    private void rate_us() {
-        String str ="https://play.google.com/store/apps/details?id=ws.crandell.newspaperpuzzles";
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(str)));
-    }
-    private void showHelp() {
-        String str ="https://www.milindkrohit.wordpress.com";
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(str)));
-    }
     public void start_activity(){
 
         Intent intent = new Intent(this, MTTActivity.class);
@@ -379,38 +451,7 @@ public class MTTActivity extends AppCompatActivity {
 
 
     }
-    public void homeActivity(){
-        Intent intent = new Intent(this, Start_Activity.class);
-        startActivity(intent);
-    }
-    private void sendEmail(){
 
-        String info = "okay ",emailAdd;
-        emailAdd = "milind0359@gmail.com";
-        Log.i("Send email", "");
-        String emailaddress[] = {emailAdd};
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.setType("plane/text");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, emailaddress);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "SudokuSolverAdvanced : state your subject here");
-
-        emailIntent.putExtra(Intent.EXTRA_TEXT, info);
-        //startActivity(emailIntent);
-
-        try {
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-            finish();
-            Log.i("Finished sending email", "");
-        }
-        catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(MTTActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void logout(){
-        mydb.logout(1,"0");
-
-    }
     @Override
     protected void onPause() {
         super.onPause();

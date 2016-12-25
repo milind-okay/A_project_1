@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.wordpress.milindkrohit.tttypingtest"> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-sdk
         android:minSdkVersion="9"
@@ -29,6 +30,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--facebook account kit   -->
+        <meta-data android:name="com.facebook.accountkit.ApplicationName"
+            android:value="@string/app_name" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/FACEBOOK_APP_ID" />
+        <meta-data android:name="com.facebook.accountkit.ClientToken"
+            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+
+        <activity
+            android:name="com.facebook.accountkit.ui.AccountKitActivity"
+            android:theme="@style/AppTheme.AccountKit"
+            tools:replace="android:theme"/>
+
+        <!--end*******************************************-->
         <activity
             android:name=".MTTActivity"
             android:label="@string/app_name"
@@ -48,18 +63,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".mLoginActivity"
-            android:label="@string/title_activity_m_login"
-            android:parentActivityName=".Start_Activity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wordpress.milindkrohit.tttypingtest.Start_Activity" />
-        </activity>
-        <activity android:name=".Account" />
-        <activity android:name=".log" />
+        <activity android:name=".Register" />
         <activity android:name=".scoreboard" />
-        <activity android:name=".Leaderboard"></activity>
+        <activity android:name=".Leaderboard" />
     </application>
 
 </manifest>
